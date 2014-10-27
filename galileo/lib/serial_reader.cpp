@@ -1,12 +1,14 @@
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <stdlib.h>
 
 #include <fcntl.h> 
 #include <termios.h> 
 #include <unistd.h>
 
 
-const std::string USB_SERIAL_PORT = "/dev/cu.usbmodemfd121";
+const std::string USB_SERIAL_PORT = "/dev/cu.usbmodem1421";
 
 int init_serial_input (const char *);
 int read_serial_int(int fd);
@@ -22,12 +24,24 @@ int main()
 
 	while (true)
 	{
+        std::stringstream strstm;
 		int pin = read_serial_int(port_fd);
 		int reading = read_serial_int(port_fd);
 		int output = 0;
 		output += (pin << 8);
 		output += reading;
+        
+        char cha1, cha2;
+        cha1 = (char)(((int)'0')+pin);
+        cha2 = (char)(((int)'0')+reading);
 		std::cout << std::hex << output << std::endl;
+        
+        strstm << "echo '";
+        strstm << cha1;
+        strstm << cha2;
+        strstm <<  "' | nc -4u -w1 127.0.0.1 21368";
+        //printf("%i,%i , %s", pin, reading, strstm.str().c_str());
+        system(strstm.str().c_str());
 	}
 
 	return 0;
