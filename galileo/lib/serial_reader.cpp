@@ -1,8 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include <string>
-#include <stdlib.h>
-
+#include <cstdlib>
 #include <fcntl.h> 
 #include <termios.h> 
 #include <unistd.h>
@@ -25,11 +23,11 @@ int main()
 	while (true)
 	{
         std::stringstream strstm;
-		int pin = read_serial_int(port_fd);
-		int reading = read_serial_int(port_fd);
-		int output = 0;
-		output += (pin << 8);
-		output += reading;
+				int pin = read_serial_int(port_fd);
+				int reading = read_serial_int(port_fd);
+				int output = 0;
+				output += (pin << 8);
+				output += reading;
         
         char cha1, cha2;
         cha1 = (char)(((int)'0')+pin);
@@ -62,7 +60,7 @@ int read_serial_int(int fd)
 		str.push_back(c);
 		read(fd, &c, 1);
 	}
-	return std::stoi(str);
+	return atoi(str.c_str());
 }
 
 int init_serial_input (const char * port) {   
