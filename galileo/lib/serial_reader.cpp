@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include <cstdlib>
+#include <stdlib.h>
 #include <fcntl.h> 
 #include <termios.h> 
 #include <unistd.h>
@@ -13,54 +13,54 @@ int read_serial_int(int fd);
 
 int main()
 {
-	int port_fd = init_serial_input(USB_SERIAL_PORT.c_str());
-	if (port_fd == -1)
-	{
-		std::cerr << "Failed to initialize serial input." << std::endl;
-		return 0;
-	}
+  int port_fd = init_serial_input(USB_SERIAL_PORT.c_str());
+  if (port_fd == -1)
+  {
+    std::cerr << "Failed to initialize serial input." << std::endl;
+    return 0;
+  }
 
-	while (true)
-	{
-        std::stringstream strstm;
-				int pin = read_serial_int(port_fd);
-				int reading = read_serial_int(port_fd);
-				int output = 0;
-				output += (pin << 8);
-				output += reading;
-        
-        char cha1, cha2;
-        cha1 = (char)(((int)'0')+pin);
-        cha2 = (char)(((int)'0')+reading);
-//		std::cout << std::hex << output << std::endl;
-        
-        strstm << "echo '";
-        strstm << cha1;
-        strstm << cha2;
-        strstm <<  "' | nc -4u -w1 127.0.0.1 21368";
-        //printf("%i,%i , %s", pin, reading, strstm.str().c_str());
-        system(strstm.str().c_str());
-	}
+  while (true)
+  {
+    std::stringstream strstm;
+    int pin = read_serial_int(port_fd);
+    int reading = read_serial_int(port_fd);
+    int output = 0;
+    output += (pin << 8);
+    output += reading;
+    
+    char cha1, cha2;
+    cha1 = (char)(((int)'0')+pin);
+    cha2 = (char)(((int)'0')+reading);
+//  d::cout << std::hex << output << std::endl;
+    
+    strstm << "echo '";
+    strstm << cha1;
+    strstm << cha2;
+    strstm <<  "' | nc -4u -w1 127.0.0.1 21368";
+    //printf("%i,%i , %s", pin, reading, strstm.str().c_str());
+    system(strstm.str().c_str());
+  }
 
-	return 0;
+  return 0;
 }
  
 int read_serial_int(int fd)
 {
-	std::string str = "";
-	char c = '\0';
+  std::string str = "";
+  char c = '\0';
 
-	read(fd, &c, 1);
-	while (isspace(c))
-	{
-		read(fd, &c, 1);
-	}
-	while (!isspace(c))
-	{
-		str.push_back(c);
-		read(fd, &c, 1);
-	}
-	return atoi(str.c_str());
+  read(fd, &c, 1);
+  while (isspace(c))
+  {
+    read(fd, &c, 1);
+  }
+  while (!isspace(c))
+  {
+    str.push_back(c);
+    read(fd, &c, 1);
+  }
+  return atoi(str.c_str());
 }
 
 int init_serial_input (const char * port) {   
