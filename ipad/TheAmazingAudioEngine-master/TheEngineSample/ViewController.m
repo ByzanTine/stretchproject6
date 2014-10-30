@@ -30,6 +30,7 @@
     AEChannelGroupRef _group;
     GCDAsyncUdpSocket *udpSocket;
     NSString *messageIn;
+    UISlider *trackingS;
 }
 @property (nonatomic, retain) AEAudioController *audioController;
 @property (nonatomic, retain) AEAudioFilePlayer *loop1;
@@ -69,7 +70,7 @@
     
     // Create the first loop player
     self.loop1 = [AEAudioFilePlayer audioFilePlayerWithURL:[[NSBundle mainBundle]
-                                                            URLForResource:@"clip4" withExtension:@"mp3"]
+                                                            URLForResource:@"Southern Rock Organ" withExtension:@"m4a"]
                                            audioController:_audioController
                                                      error:NULL];
     _loop1.volume = 1.0;
@@ -77,7 +78,7 @@
     _loop1.loop = YES;
     
     // Create the second loop player
-    self.loop2 = [AEAudioFilePlayer audioFilePlayerWithURL:[[NSBundle mainBundle] URLForResource:@"clip5" withExtension:@"mp3"]
+    self.loop2 = [AEAudioFilePlayer audioFilePlayerWithURL:[[NSBundle mainBundle] URLForResource:@"Southern Rock Drums" withExtension:@"m4a"]
                                            audioController:_audioController
                                                      error:NULL];
     _loop2.volume = 1.0;
@@ -85,7 +86,7 @@
     _loop2.loop = YES;
     
     // Create the third loop player
-    self.loop3 = [AEAudioFilePlayer audioFilePlayerWithURL:[[NSBundle mainBundle] URLForResource:@"clip2" withExtension:@"mp3"]
+    self.loop3 = [AEAudioFilePlayer audioFilePlayerWithURL:[[NSBundle mainBundle] URLForResource:@"Southern Rock Drums" withExtension:@"m4a"]
                                            audioController:_audioController
                                                      error:NULL];
     _loop3.volume = 1.0;
@@ -180,16 +181,17 @@ decodeAndRespond
 //    riffId = [[message substringWithRange:NSMakeRange(0,1)] intValue];
 //    volume = [[message substringWithRange:NSMakeRange(1,3)] intValue]/100;
 //    }
-    
-    
-    
-    NSLog(@"riffId:%i ,volume: %f ", riffId, volume);
     float equilizer[3] = {0.4, 0.5, 1.0};
     volume = volume * equilizer[riffId];
+    volume = (volume - 0.1) * 3.5;
+    
+    NSLog(@"riffId:%i ,volume: %f ", riffId, volume);
+
     switch(riffId)
     {
         case 1:
             _loop1.volume = (float)volume;
+            trackingS.value = _loop1.volume;
             break;
         case 2:
             _loop2.volume = (float)volume;
@@ -275,6 +277,7 @@ decodeAndRespond
     return 4;
 }
 
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     BOOL isiPad = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
     
@@ -306,6 +309,7 @@ decodeAndRespond
                     cell.textLabel.text = @"Channel 1";
                     ((UISwitch*)cell.accessoryView).on = !_loop1.channelIsMuted;
                     slider.value = _loop1.volume;
+                    trackingS = slider;
                     [((UISwitch*)cell.accessoryView) addTarget:self action:@selector(loop1SwitchChanged:) forControlEvents:UIControlEventValueChanged];
                     [slider addTarget:self action:@selector(loop1VolumeChanged:) forControlEvents:UIControlEventValueChanged];
                     break;

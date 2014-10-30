@@ -34,7 +34,7 @@ int main()
         char cha1, cha2;
         cha1 = (char)(((int)'0')+pin);
         cha2 = (char)(((int)'0')+reading);
-		std::cout << std::hex << output << std::endl;
+//		std::cout << std::hex << output << std::endl;
         
         strstm << "echo '";
         strstm << cha1;
